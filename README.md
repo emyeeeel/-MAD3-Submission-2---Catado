@@ -1,16 +1,19 @@
 # MAD 3 Tasks
 
-### 1. See all posts
-### 2. Show a summary card instead  of all the data (GET /posts)
-### 3. See the details of a specific post
-### 4. Show a detailed view via modal or a different screen (GET /posts/id)
-### 5. Add a new post and see it in the overall list (POST /posts) 
-### 6. Delete a post (resource will not be really updated on the server but it will be faked as if) therefore find a way to make it seem as if it was added in the UI
-### 7. Edit a post (PUT) (resource will not be really updated on the server but it will be faked as if) therefore find a way to make it seem as if it was added in the UI
-### 8. Delete a post (resource will not be really updated on the server but it will be faked as if) therefore find a way to make it seem as if it was deleted in the UI
-### 9. Ensure aesthetics and validation for inputs.
+## Table of Contents
+- [See all posts](#see-all-posts)
+- [Show a summary card instead of all the data (GET /posts)](#show-a-summary-card-instead-of-all-the-data-get-posts)
+- [See the details of a specific post](#see-the-details-of-a-specific-post)
+- [Show a detailed view via modal or a different screen (GET /posts/id)](#show-a-detailed-view-via-modal-or-a-different-screen-get-posts-id)
+- [Add a new post and see it in the overall list (POST /posts)](#add-a-new-post-and-see-it-in-the-overall-list-post-posts)
+- [Delete a post (faked deletion in UI)](#delete-a-post-faked-deletion-in-ui)
+- [Edit a post (PUT) (faked update in UI)](#edit-a-post-put-faked-update-in-ui)
+- [Ensure aesthetics and validation for inputs](#ensure-aesthetics-and-validation-for-inputs)
 
+## Output Screenshots
 ![Screenshot!](lib/Screenshot_1719231597.png)
 
-#### All tasks done by Catado
+<img src="lib/Screenshot_1719231597.png" alt="list of post" width="270" height="600"/>
+
+## All tasks done by Catado
 
