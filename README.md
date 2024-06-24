@@ -11,8 +11,8 @@
 - [Ensure aesthetics and validation for inputs](#ensure-aesthetics-and-validation-for-inputs)
 
 ## Output Screenshots
-![Screenshot!](lib/Screenshot_1719231597.png)
 
+### List of all posts
 <img src="lib/Screenshot_1719231597.png" alt="list of post" width="270" height="600"/>
 
 ## All tasks done by Catado
