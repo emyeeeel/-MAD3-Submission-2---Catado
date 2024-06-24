@@ -24,5 +24,8 @@
 ### Edit Post
 <img src="lib/screenshots/Screenshot_1719233769.png" alt="delete post" width="270" height="600"/>
 
+### Add Post
+<img src="lib/screenshots/Screenshot_1719235555.png" alt="delete post" width="270" height="600"/>
+
 ## All tasks done by Catado
 

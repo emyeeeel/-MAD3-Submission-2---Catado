@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,18 +25,19 @@ class PostController with ChangeNotifier {
   }
 
   Future<void> showAlertIfEmpty(BuildContext context) async {
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Validation Error'),
-          content: const Text('Please input all fields'),
-          actions: <Widget>[
-            TextButton(
+        return CupertinoAlertDialog(
+          title: const Text('Error'),
+          content: const Text('Please input at least one field'),
+          actions: <CupertinoDialogAction>[
+            CupertinoDialogAction(
+              isDefaultAction: true,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop(); 
-              },
             ),
           ],
         );

@@ -176,7 +176,7 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
   }
 
   showNewPostFunction(BuildContext context) {
-    AddPostDialog.show(context, controller: controller);
+    AddPost.show(context, controller: controller);
   }
 
   //details
@@ -267,133 +267,7 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
   }
 }
 
-
-
-class AddPostDialog extends StatefulWidget {
-  static show(BuildContext context, {required PostController controller}) =>
-      showDialog(
-          context: context, builder: (dContext) => AddPostDialog(controller));
-  const AddPostDialog(this.controller, {super.key});
-
-  final PostController controller;
-
-  @override
-  State<AddPostDialog> createState() => _AddPostDialogState();
-}
-
-class _AddPostDialogState extends State<AddPostDialog> {
-  late TextEditingController bodyContent, titleContent;
-
-  @override
-  void initState() {
-    super.initState();
-    bodyContent = TextEditingController();
-    titleContent = TextEditingController();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      title: const Text("Add new post"),
-      actions: [
-        ElevatedButton(
-          onPressed: () async {
-            if (titleContent.text.trim().isEmpty || bodyContent.text.trim().isEmpty) {
-              return widget.controller.showAlertIfEmpty(context);
-            } else {
-              await widget.controller.makePost(
-                  title: titleContent.text.trim(),
-                  body: bodyContent.text.trim(),
-                  userId: 1);
-              Navigator.pop(context);
-            }
-          },
-          child: const Text("Add"),
-        )
-      ],
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("Title"),
-          Flexible(
-            child: TextFormField(
-              controller: titleContent,
-            ),
-          ),
-          const Text("Content"),
-          Flexible(
-            child: TextFormField(
-              controller: bodyContent,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 //edit post
-class EditPostDialog {
-  static Future<void> show(
-    BuildContext context, {
-    required int postID,
-    required PostController controller,
-  }) async {
-    late TextEditingController bodyContent, titleContent;
-
-    bodyContent = TextEditingController();
-    titleContent = TextEditingController();
-
-    await showDialog(
-      context: context,
-      builder: (dContext) => AlertDialog(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-        title: const Text("Edit Post"),
-        actions: [
-          ElevatedButton(
-            onPressed: () async {
-              if (titleContent.text.trim().isEmpty || bodyContent.text.trim().isEmpty) {
-                return controller.showAlertIfEmpty(context);
-              } else {
-                await controller.editPost(
-                  postId: postID,
-                  title: titleContent.text.trim(),
-                  body: bodyContent.text.trim(),
-                  userId: postID,
-                );
-              }
-
-              Navigator.pop(context);
-            },
-            child: const Text("Edit"),
-          )
-        ],
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("New Title"),
-            Flexible(
-              child: TextFormField(
-                controller: titleContent,
-              ),
-            ),
-            const SizedBox(height: 30,),
-            const Text("New Body Content"),
-            Flexible(
-              child: TextFormField(
-                controller: bodyContent,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class EditPost {
   static Future<void> show(
     BuildContext context, {
@@ -492,6 +366,100 @@ class EditPost {
             ),
           ],
       )
+    );
+  }
+}
+
+
+//add post
+class AddPost extends StatefulWidget {
+  static show(BuildContext context, {required PostController controller}) =>
+      showDialog(
+          context: context, builder: (dContext) => AddPost(controller));
+  const AddPost(this.controller, {super.key});
+
+  final PostController controller;
+
+  @override
+  State<AddPost> createState() => _AddPostState();
+}
+
+class _AddPostState extends State<AddPost> {
+  late TextEditingController bodyContent, titleContent;
+
+  @override
+  void initState() {
+    super.initState();
+    bodyContent = TextEditingController();
+    titleContent = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    bodyContent.dispose();
+    titleContent.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoAlertDialog(
+      title: const Text("Add new post"),
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Title: '),
+             const SizedBox(height: 5,),
+             CupertinoTextField(
+              controller: titleContent,
+             ),
+             const SizedBox(height: 25,),
+             const Text('Body: '),
+             const SizedBox(height: 5,),
+             CupertinoTextField(
+              maxLines: 10,
+              controller: bodyContent,
+             ),
+        ],
+      ),
+      actions: <CupertinoDialogAction>[
+        CupertinoDialogAction(
+          isDefaultAction: true,
+            onPressed: () async {
+            if (titleContent.text.trim().isEmpty || bodyContent.text.trim().isEmpty) {
+              return widget.controller.showAlertIfEmpty(context);
+            } else {
+              showDialog(
+                      context: context, 
+                      builder: (context) {
+                      return const Center(child: CircularProgressIndicator());
+                      }
+                    ); 
+                await widget.controller.makePost(
+                    title: titleContent.text.trim(),
+                    body: bodyContent.text.trim(),
+                    userId: 1);
+                Navigator.pop(context);
+              }
+              Navigator.pop(context);
+            },
+          child: const Text('Add'),
+        ),
+        // ElevatedButton(
+        //   onPressed: () async {
+        //     if (titleContent.text.trim().isEmpty || bodyContent.text.trim().isEmpty) {
+        //       return widget.controller.showAlertIfEmpty(context);
+        //     } else {
+        //       await widget.controller.makePost(
+        //           title: titleContent.text.trim(),
+        //           body: bodyContent.text.trim(),
+        //           userId: 1);
+        //       Navigator.pop(context);
+        //     }
+        //   },
+        //   child: const Text("Add"),
+        // )
+      ],
     );
   }
 }
