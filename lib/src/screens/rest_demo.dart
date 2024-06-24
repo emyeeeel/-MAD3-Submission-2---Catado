@@ -22,6 +22,12 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +54,6 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
                   child: Text(controller.error.toString()),
                 );
               }
-
               if (!controller.working) {
                 return Center(
                   child: SingleChildScrollView(
@@ -92,19 +97,21 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
                                           const EdgeInsets.only(left: 190),
                                       child: Row(
                                         children: [
+                                          const Spacer(),
                                           IconButton(
                                               onPressed: () {
-                                                EditPostDialog.show(context,
-                                                    postID: post.id,
-                                                    controller: controller);
+                                                EditPostDialog.show(context, postID: post.id, controller: controller);
                                               },
-                                              icon: const Icon(Icons.edit)),
+                                              icon: const Icon(Icons.edit),
+                                              iconSize: 25,
+                                          ),
                                           IconButton(
                                               onPressed: () {
-                                                controller.deletePost(
-                                                    postId: post.id);
+                                                controller.deletePost(postId: post.id);
                                               },
-                                              icon: const Icon(Icons.delete)),
+                                              icon: const Icon(Icons.delete),
+                                              iconSize: 25,
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -175,13 +182,13 @@ class AddPostDialog extends StatefulWidget {
 }
 
 class _AddPostDialogState extends State<AddPostDialog> {
-  late TextEditingController bodyC, titleC;
+  late TextEditingController bodyContent, titleContent;
 
   @override
   void initState() {
     super.initState();
-    bodyC = TextEditingController();
-    titleC = TextEditingController();
+    bodyContent = TextEditingController();
+    titleContent = TextEditingController();
   }
 
   @override
@@ -192,12 +199,12 @@ class _AddPostDialogState extends State<AddPostDialog> {
       actions: [
         ElevatedButton(
           onPressed: () async {
-            if (titleC.text.trim().isEmpty || bodyC.text.trim().isEmpty) {
+            if (titleContent.text.trim().isEmpty || bodyContent.text.trim().isEmpty) {
               return widget.controller.showAlertIfEmpty(context);
             } else {
               await widget.controller.makePost(
-                  title: titleC.text.trim(),
-                  body: bodyC.text.trim(),
+                  title: titleContent.text.trim(),
+                  body: bodyContent.text.trim(),
                   userId: 1);
               Navigator.of(context).pop();
             }
@@ -212,13 +219,13 @@ class _AddPostDialogState extends State<AddPostDialog> {
           const Text("Title"),
           Flexible(
             child: TextFormField(
-              controller: titleC,
+              controller: titleContent,
             ),
           ),
           const Text("Content"),
           Flexible(
             child: TextFormField(
-              controller: bodyC,
+              controller: bodyContent,
             ),
           ),
         ],
@@ -227,17 +234,17 @@ class _AddPostDialogState extends State<AddPostDialog> {
   }
 }
 
-//dialog for the edit post
+//edit post
 class EditPostDialog {
   static Future<void> show(
     BuildContext context, {
     required int postID,
     required PostController controller,
   }) async {
-    late TextEditingController bodyC, titleC;
+    late TextEditingController bodyContent, titleContent;
 
-    bodyC = TextEditingController();
-    titleC = TextEditingController();
+    bodyContent = TextEditingController();
+    titleContent = TextEditingController();
 
     await showDialog(
       context: context,
@@ -247,13 +254,13 @@ class EditPostDialog {
         actions: [
           ElevatedButton(
             onPressed: () async {
-              if (titleC.text.trim().isEmpty || bodyC.text.trim().isEmpty) {
+              if (titleContent.text.trim().isEmpty || bodyContent.text.trim().isEmpty) {
                 return controller.showAlertIfEmpty(context);
               } else {
                 await controller.editPost(
                   postId: postID,
-                  title: titleC.text.trim(),
-                  body: bodyC.text.trim(),
+                  title: titleContent.text.trim(),
+                  body: bodyContent.text.trim(),
                   userId: postID,
                 );
               }
@@ -267,16 +274,17 @@ class EditPostDialog {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Title"),
+            const Text("New Title"),
             Flexible(
               child: TextFormField(
-                controller: titleC,
+                controller: titleContent,
               ),
             ),
-            const Text("Content"),
+            const SizedBox(height: 30,),
+            const Text("New Body Content"),
             Flexible(
               child: TextFormField(
-                controller: bodyC,
+                controller: bodyContent,
               ),
             ),
           ],
