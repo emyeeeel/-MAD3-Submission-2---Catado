@@ -13,7 +13,16 @@
 ## Output Screenshots
 
 ### List of all posts
-<img src="lib/Screenshot_1719231597.png" alt="list of post" width="270" height="600"/>
+<img src="lib/screenshots/Screenshot_1719231597.png" alt="list of post" width="270" height="600"/>
+
+### Show Post Details
+<img src="lib/screenshots/Screenshot_1719233634.png" alt="post details" width="270" height="600"/>
+
+### Delete Post
+<img src="lib/screenshots/Screenshot_1719233641.png" alt="delete post" width="270" height="600"/>
+
+### Edit Post
+<img src="lib/screenshots/Screenshot_1719233769.png" alt="delete post" width="270" height="600"/>
 
 ## All tasks done by Catado
 

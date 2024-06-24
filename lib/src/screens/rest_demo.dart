@@ -256,7 +256,8 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
             TextButton(
               child: const Text("Close"),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.pop(context);
+                Navigator.pop(context);
               },
             ),
           ],
@@ -429,7 +430,7 @@ class EditPost {
           ),
           actions: [
             TextButton(
-              child: const Text("Confirm changes"),
+              child: const Text("Confirm"),
               onPressed: () async {
                 if (titleContent.text.trim().isEmpty && bodyContent.text.trim().isEmpty) {
                   return controller.showAlertIfEmpty(context);
