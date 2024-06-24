@@ -10,5 +10,7 @@
 ### 8. Delete a post (resource will not be really updated on the server but it will be faked as if) therefore find a way to make it seem as if it was deleted in the UI
 ### 9. Ensure aesthetics and validation for inputs.
 
+![Screenshot!](lib/Screenshot_1719231597.png)
+
 #### All tasks done by Catado
 
