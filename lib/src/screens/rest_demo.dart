@@ -31,8 +31,8 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Center(child: Text("Posts")),
         centerTitle: true,
-        title: const Text("Posts"),
         actions: [
           IconButton(
             onPressed: () {
@@ -97,7 +97,7 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
                                                     CupertinoActionSheetAction(
                                                       child: const Text('Edit Post'),
                                                       onPressed: () {
-                                                        EditPostDialog.show(context, postID: post.id, controller: controller); 
+                                                        EditPost.show(context, postID: post.id, controller: controller); 
                                                       },
                                                     ),
                                                     CupertinoActionSheetAction(
@@ -127,6 +127,7 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
                                                                   }
                                                                 ); 
                                                                 await Future.delayed(const Duration(seconds: 2));
+                                                                Navigator.pop(context);
                                                                 Navigator.pop(context);
                                                                 Navigator.pop(context);
                                                               },
@@ -392,3 +393,104 @@ class EditPostDialog {
   }
 }
 
+class EditPost {
+  static Future<void> show(
+    BuildContext context, {
+    required int postID,
+    required PostController controller,
+  }) async {
+    late TextEditingController bodyContent, titleContent;
+
+    bodyContent = TextEditingController();
+    titleContent = TextEditingController();
+
+    await showCupertinoDialog(
+      context: context, 
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text("Post Details"),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+             const Text('Title: '),
+             const SizedBox(height: 5,),
+             CupertinoTextField(
+              placeholder: controller.getPostByIdLocally(postID).title,
+              controller: titleContent,
+             ),
+             const SizedBox(height: 25,),
+             const Text('Body: '),
+             const SizedBox(height: 5,),
+             CupertinoTextField(
+              placeholder: controller.getPostByIdLocally(postID).body,
+              maxLines: 10,
+              controller: bodyContent,
+             ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text("Confirm changes"),
+              onPressed: () async {
+                if (titleContent.text.trim().isEmpty && bodyContent.text.trim().isEmpty) {
+                  return controller.showAlertIfEmpty(context);
+                }else if(titleContent.text.trim().isEmpty){
+                  showDialog(
+                    context: context, 
+                    builder: (context) {
+                    return const Center(child: CircularProgressIndicator());
+                    }
+                  ); 
+                  await controller.editPost(
+                    postId: postID,
+                    title: controller.getPostByIdLocally(postID).title,
+                    body: bodyContent.text.trim(),
+                    userId: controller.getPostByIdLocally(postID).userId,
+                  );
+                  Navigator.pop(context);
+                }
+                else if(bodyContent.text.trim().isEmpty){
+                  showDialog(
+                    context: context, 
+                    builder: (context) {
+                    return const Center(child: CircularProgressIndicator());
+                    }
+                  ); 
+                  await controller.editPost(
+                    postId: postID,
+                    title: titleContent.text.trim(),
+                    body: controller.getPostByIdLocally(postID).body,
+                    userId: controller.getPostByIdLocally(postID).userId,
+                  );
+                  Navigator.pop(context);
+                }  
+                else {
+                  showDialog(
+                    context: context, 
+                    builder: (context) {
+                    return const Center(child: CircularProgressIndicator());
+                    }
+                  ); 
+                  await controller.editPost(
+                    postId: postID,
+                    title: titleContent.text.trim(),
+                    body: bodyContent.text.trim(),
+                    userId: controller.getPostByIdLocally(postID).userId,
+                  );
+                  Navigator.pop(context);
+                }
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              }, 
+              child: const Text("Cancel"),
+            ),
+          ],
+      )
+    );
+  }
+}
