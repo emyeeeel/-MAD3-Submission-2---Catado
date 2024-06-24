@@ -1,8 +1,8 @@
 //updated 6/20/24 at 7:41 PM
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:state_change_demo/src/models/post.model.dart';
-
 import '../controllers/post_controller.dart';
 
 class RestDemoScreen extends StatefulWidget {
@@ -31,13 +31,14 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text("Posts"),
-        leading: IconButton(
+        actions: [
+          IconButton(
             onPressed: () {
               controller.getPosts();
             },
             icon: const Icon(Icons.refresh)),
-        actions: [
           IconButton(
               onPressed: () {
                 showNewPostFunction(context);
@@ -59,7 +60,7 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
                   child: SingleChildScrollView(
                       padding: const EdgeInsets.all(16),
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           for (Post post in controller.postList)
                             Container(
@@ -82,38 +83,79 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
                                         const Spacer(),
                                         GestureDetector(
                                           onTap: () {
-                                            showConfirmationDialog(context, post.id, controller);
+                                            showCupertinoModalPopup(
+                                              context: context, 
+                                              builder: (BuildContext context) {
+                                                return CupertinoActionSheet(
+                                                  actions: <CupertinoActionSheetAction>[
+                                                    CupertinoActionSheetAction(
+                                                      child: const Text('View Post Details'),
+                                                      onPressed: () {
+                                                        displayDetails(context, post.id, controller);
+                                                      },
+                                                    ),
+                                                    CupertinoActionSheetAction(
+                                                      child: const Text('Edit Post'),
+                                                      onPressed: () {
+                                                        EditPostDialog.show(context, postID: post.id, controller: controller); 
+                                                      },
+                                                    ),
+                                                    CupertinoActionSheetAction(
+                                                      child: const Text('Delete Post'),
+                                                      onPressed: () {
+                                                        showCupertinoModalPopup(
+                                                          context: context, 
+                                                          builder: (BuildContext context) => CupertinoAlertDialog(
+                                                          title: const Text('Are you sure you want to delete this post?'),
+                                                          content: const Text('This will delete this post permanently. You cannot undo this action.'),
+                                                          actions: <CupertinoDialogAction>[
+                                                            CupertinoDialogAction(
+                                                              isDefaultAction: true,
+                                                              onPressed: () {
+                                                                Navigator.pop(context);
+                                                              },
+                                                              child: const Text('Cancel'),
+                                                            ),
+                                                            CupertinoDialogAction(
+                                                              isDestructiveAction: true,
+                                                              onPressed: () async {
+                                                                controller.deletePost(postId: post.id);
+                                                                showDialog(
+                                                                  context: context, 
+                                                                  builder: (context) {
+                                                                    return const Center(child: CircularProgressIndicator());
+                                                                  }
+                                                                ); 
+                                                                await Future.delayed(const Duration(seconds: 2));
+                                                                Navigator.pop(context);
+                                                                Navigator.pop(context);
+                                                              },
+                                                              child: const Text('Delete'),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              }
+                                            );
                                           },
-                                          child: Row(
-                                                children: List.generate(3, (index) => const Icon(Icons.circle, size: 8,)),
+                                          child: SizedBox(
+                                            width: 30,
+                                            height: 30,
+                                            child: Row(
+                                                  children: List.generate(3, (index) => const Icon(Icons.circle, size: 8,)),
+                                            ),
                                           ),
                                         ),
                                       ],
                                     ),
                                     const SizedBox(height: 10,),
-                                    Center(child: Text(post.body, textAlign: TextAlign.justify,)),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 190),
-                                      child: Row(
-                                        children: [
-                                          const Spacer(),
-                                          IconButton(
-                                              onPressed: () {
-                                                EditPostDialog.show(context, postID: post.id, controller: controller);
-                                              },
-                                              icon: const Icon(Icons.edit),
-                                              iconSize: 25,
-                                          ),
-                                          IconButton(
-                                              onPressed: () {
-                                                controller.deletePost(postId: post.id);
-                                              },
-                                              icon: const Icon(Icons.delete),
-                                              iconSize: 25,
-                                          ),
-                                        ],
-                                      ),
+                                    SizedBox(
+                                      width: 350,
+                                      child: Text(post.body)
                                     ),
                                   ],
                                 ))
@@ -135,24 +177,78 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
   showNewPostFunction(BuildContext context) {
     AddPostDialog.show(context, controller: controller);
   }
-  
-  //details cards
-  void showConfirmationDialog(
+
+  //details
+  void displayDetails(
       BuildContext context, int postId, PostController controller) {
     var posts = controller.getPostByIdLocally(postId);
-    showDialog(
+    showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return CupertinoAlertDialog(
           title: const Text("Post Details"),
           content: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("UserId: ${posts.userId}\n"),
-              Text("Id: ${posts.id}\n"),
-              Text("Title: ${posts.title}\n"),
-              Text("Body: ${posts.body}\n"),
+              RichText(
+              text: TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: 'UserId: ',
+                      style: TextStyle(fontWeight: FontWeight.bold, color:  Colors.black), 
+                    ),
+                    TextSpan(
+                      text: '${posts.userId}',
+                      style: const TextStyle(fontWeight: FontWeight.normal, color:  Colors.black), 
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 5,),
+              RichText(
+              text: TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: 'Id: ',
+                      style: TextStyle(fontWeight: FontWeight.bold, color:  Colors.black), 
+                    ),
+                    TextSpan(
+                      text: '${posts.id}',
+                      style: const TextStyle(fontWeight: FontWeight.normal, color:  Colors.black), 
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 5,),
+              RichText(
+              text: TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: 'Title: ',
+                      style: TextStyle(fontWeight: FontWeight.bold, color:  Colors.black), 
+                    ),
+                    TextSpan(
+                      text: posts.title,
+                      style: const TextStyle(fontWeight: FontWeight.normal, color:  Colors.black), 
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 5,),
+              RichText(
+              text: TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: 'Body: ',
+                      style: TextStyle(fontWeight: FontWeight.bold, color:  Colors.black), 
+                    ),
+                    TextSpan(
+                      text: posts.body,
+                      style: const TextStyle(fontWeight: FontWeight.normal, color:  Colors.black), 
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           actions: [
@@ -168,6 +264,8 @@ class _RestDemoScreenState extends State<RestDemoScreen> {
     );
   }
 }
+
+
 
 class AddPostDialog extends StatefulWidget {
   static show(BuildContext context, {required PostController controller}) =>
@@ -206,7 +304,7 @@ class _AddPostDialogState extends State<AddPostDialog> {
                   title: titleContent.text.trim(),
                   body: bodyContent.text.trim(),
                   userId: 1);
-              Navigator.of(context).pop();
+              Navigator.pop(context);
             }
           },
           child: const Text("Add"),
@@ -265,7 +363,7 @@ class EditPostDialog {
                 );
               }
 
-              Navigator.of(context).pop();
+              Navigator.pop(context);
             },
             child: const Text("Edit"),
           )
